@@ -24,7 +24,7 @@ HEADERS  += widget.h \
 FORMS    += widget.ui
 
 win32: {
-    QMAKE_LFLAGS += -static -static-libgcc
+    # QMAKE_LFLAGS += -static -static-libgcc
     LIBS += -L$$PWD -lfftw3-3
 }
 
