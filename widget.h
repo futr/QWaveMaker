@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QtMultimedia/QAudioOutput>
+#include <QtMultimedia/QAudioInput>
 #include <QBuffer>
 #include <QMessageBox>
 #include <QtMath>
@@ -29,16 +30,24 @@ private slots:
     void setVolume( int vol );
     void doFFT( void );
     void doIFFT( void );
+    void readInputAudioData( void );
     void on_stopButton_clicked();
 
     void on_playButton_clicked();
+
+    void on_startRecordButton_clicked();
+
+    void on_stopRecordButton_clicked();
 
 private:
     Ui::Widget *ui;
 
     QAudioOutput *audioOutpu;
+    QAudioInput *audioInput;
+    QIODevice *inputDevice;
     WaveDevice waveFIFO;
     int numData;
+    qint64 readInputPos;
 
     QVector<qreal> outputWave;
 };

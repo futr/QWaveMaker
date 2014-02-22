@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>704</width>
-    <height>538</height>
+    <height>621</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -65,7 +65,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>周波数分布</string>
+            <string>位相分布</string>
            </property>
           </widget>
          </item>
@@ -261,6 +261,33 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>録音</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="inputDeviceId"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="startRecordButton">
+       <property name="text">
+        <string>録音</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="stopRecordButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>停止</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

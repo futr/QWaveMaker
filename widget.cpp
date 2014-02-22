@@ -54,6 +54,7 @@ Widget::Widget(QWidget *parent) :
     // QAudioOutput初期化
     audioOutpu = new QAudioOutput( format, this );
 
+
     // シグナル接続
     connect( ui->freqSpinBox,   SIGNAL(valueChanged(int)),   this,              SLOT(waveChange()) );
     connect( ui->freqDial,      SIGNAL(valueChanged(int)),   ui->freqSpinBox,   SLOT(setValue(int)) );
@@ -366,4 +367,102 @@ void Widget::doIFFT()
     // FFT用データー解放
     fftw_free( input );
     fftw_free( output );
+}
+
+void Widget::readInputAudioData()
+{
+    // InputDeviceから入力データ読み込み
+    QIODevice *senderDevice = qobject_cast<QIODevice *>( sender() );
+    QVector<qreal> oldWave;
+    QByteArray input;
+    int i;
+    int pos;
+
+    // 古い波取得
+    oldWave = ui->inputWave->getWave();
+
+    // 新しい波を最大一周分
+    input = senderDevice->readAll();
+
+    // 今読んだ波を書き込む
+    for ( i = 0; i < input.size() && i < oldWave.size(); i++ ) {
+        pos = i + readInputPos;
+
+        while ( pos >= oldWave.size() ) {
+            pos -= oldWave.size();
+        }
+
+        oldWave[pos] = ( (unsigned char)input[i] - 127 );
+    }
+
+    // 実際に読めた数だけすすめる
+    readInputPos += input.size();
+
+    if ( readInputPos >= oldWave.size() ) {
+        readInputPos = 0;
+    }
+
+    // 波設定
+    ui->inputWave->setWave( oldWave );
+
+    // DEBUG
+    // senderDevice->readAll();
+    // qDebug() << input.size();
+}
+
+void Widget::on_startRecordButton_clicked()
+{
+    // 入力デバイス開く
+
+    // デバイス数チェック
+    if ( ui->inputDeviceId->value() >= QAudioDeviceInfo::availableDevices( QAudio::AudioInput ).size() ) {
+        QMessageBox::critical( this, "エラー", "指定した入力デバイスは存在しません" );
+
+        return;
+    }
+
+    // UI制御
+    ui->startRecordButton->setEnabled( false );
+    ui->stopRecordButton->setEnabled( true );
+
+    // 8bit unsigned
+    QAudioFormat format;
+    format.setChannelCount( 1 );
+    format.setSampleRate( 44100 );
+    format.setSampleType( QAudioFormat::UnSignedInt );
+    format.setSampleSize( 8 );
+    format.setCodec( "audio/pcm" );
+
+    // この設定で再生できるか確認
+    QAudioDeviceInfo info( QAudioDeviceInfo::availableDevices( QAudio::AudioInput )[ui->inputDeviceId->value()] );
+
+    if ( !info.isFormatSupported( format ) ) {
+        // サポートされていないので失敗
+        QMessageBox::critical( this, "エラー", "オーディオ入力の初期化に失敗しました" );
+    }
+
+    // 入力デバイス作成
+    audioInput = new QAudioInput( QAudioDeviceInfo::availableDevices( QAudio::AudioInput )[ui->inputDeviceId->value()], format, this );
+
+    // 録音開始
+    inputDevice = audioInput->start();
+
+    // 読み込み位置クリア
+    readInputPos = 0;
+
+    // シグナル接続
+    connect( inputDevice, SIGNAL(readyRead()), this, SLOT(readInputAudioData()) );
+}
+
+void Widget::on_stopRecordButton_clicked()
+{
+    // 録音停止
+
+    // UI制御
+    ui->startRecordButton->setEnabled( true );
+    ui->stopRecordButton->setEnabled( false );
+
+    audioInput->stop();
+
+    delete audioInput;
 }
