@@ -25,7 +25,8 @@ FORMS    += widget.ui
 
 win32: {
     # QMAKE_LFLAGS += -static -static-libgcc
-    LIBS += -L$$PWD -lfftw3-3
+    LIBS += -L$$PWD/fftw -lfftw3-3
+    INCLUDEPATH += $$PWD/fftw
     RC_FILE = app.rc
 }
 
