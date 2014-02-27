@@ -13,5 +13,11 @@ QWaveMaker
 Unix系OSではlibfftw3が入っていれば恐らくそのままビルド可能です．  
 QtCreatorでproを開いてビルド・実行してください．
 
-Windowsではソースコードと同じディレクトリに，fftw3.hとlibfftw3-3.aを用意し，
-実行ファイルのカレントディレクトリにlibfftw3-3.dllを用意すればビルド可能です．
+WindowsとMac用のlibfftw3を添付しているので，これらの環境ではそのままビルド可能です．  
+Windowsの場合，動作にlibfftw3-3.dllが必要となります．
+DLLはソースツリーのfftw内に添付しているのでこれをコピーして利用してください．
+
+Windowsは8.1と7，Macは10.9での動作を確認しています．
+
+このアプリケーションはGPLv2です．
+
