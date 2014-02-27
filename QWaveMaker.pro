@@ -30,4 +30,10 @@ win32: {
     RC_FILE = app.rc
 }
 
-unix: LIBS += -lfftw3
+macx: {
+	INCLUDEPATH += $$PWD/fftw
+	LIBS += -L$$PWD/fftw -lfftw3
+	ICON = macicon.icns
+}
+
+!macx&unix: LIBS += -lfftw3
